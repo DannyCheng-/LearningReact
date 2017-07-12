@@ -1,24 +1,38 @@
 class CommentBox extends React.Component {
+    constructor() {
+        super();
+
+        this.state = {
+            showComments: false,
+            comments: [
+                {id: 1, author: 'Morgan McCircuit', body: 'Great pictuires!'},
+                {id: 2, author: 'Bending Bender', body: 'Excellent stuff'}
+            ]
+        };
+    }
+
     render() {
         const comments = this._getComments();
+        let commentNodes;
+        let buttonText = 'Show comments';
+        if (this.state.showComments) {
+            buttonText = 'Hide Comments';
+            commentNodes = <div>{comments}</div>;
+        }
+
         return(
             <div>
+                <CommentForm addComment={this._addComment.bind(this)} />
                 <h3>Comments</h3>
                 <h4>{this._getCommentTitle(comments.length)}</h4>
-                <div>
-                    {comments}
-                </div>
+                <button onClick={this._handleClick.bind(this)}>{buttonText}</button>
+                {commentNodes}
             </div>
         );
     }
 
     _getComments() {
-        const commentList = [
-            {id: 1, author: 'Morgan McCircuit', body: 'Great pictuires!'},
-            {id: 2, author: 'Bending Bender', body: 'Excellent stuff'}
-        ];
-
-        return commentList.map(comment => {
+        return this.state.comments.map(comment => {
             return (<Comment author={comment.author} body={comment.body} key={comment.id} />)
         });
     }
@@ -31,6 +45,22 @@ class CommentBox extends React.Component {
         } else {
             return `${commentCount} comments`;
         }
+    }
+
+    _handleClick() {
+        this.setState({
+            showComments: !this.state.showComments
+        });
+    }
+
+    _addComment(author, body) {
+        const comment = {
+            id: this.state.comments.length + 1,
+            author,
+            body
+        };
+
+        this.setState({comments: this.state.comments.concat([comment])});
     }
 }
 
